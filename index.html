@@ -683,6 +683,9 @@
       
       // Only show for the CURRENT level that's being completed
       if (currentLevelBeingCompleted === level) {
+        // Updated title to include the level number
+        document.querySelector('.level-complete-modal h3').textContent = `Level ${levelNumber} Complete?`;
+        
         levelCompleteText.innerHTML = `Please confirm that Level <strong>${levelNumber}</strong> is Complete.<br>
         I, ${firstName}, confirm that I have fully completed all tasks in <strong>Level ${levelNumber}</strong>. I've watched all videos, read all materials, and completed all exercises as instructed.`;
         levelCompleteOverlay.style.display = "flex";
