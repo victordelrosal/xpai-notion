@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>GenAI Tracker</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧠</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>X</text></svg>">
   <style>
     body {
       font-family: 'Inter', sans-serif;
@@ -131,14 +131,43 @@
       color: #666;
     }
     
-    /* Collapse/expand icon */
+    /* Improved level toggle arrow */
     .level-icon {
-      transition: transform 0.3s ease;
-      font-size: 20px;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: 24px;
+      height: 24px;
+      background: #e8f5e9;
+      border-radius: 50%;
+      font-size: 14px;
+      color: #2e7d32;
+      transition: all 0.3s ease;
+      margin-right: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
     
     .level-collapsed .level-icon {
       transform: rotate(-90deg);
+    }
+
+    /* Task items with videos */
+    .task-item {
+      margin: 15px 0;
+      padding: 12px;
+      border-radius: 8px;
+      background: #f8f9fa;
+      border: 1px solid #eee;
+    }
+    
+    .task-header {
+      display: flex;
+      align-items: flex-start;
+    }
+    
+    .task-content {
+      margin-top: 10px;
+      margin-left: 25px;
     }
 
     iframe {
@@ -305,22 +334,32 @@
       </div>
       <div class="level-content">
         <ul>
-          <li>
-            <label><input type="checkbox" data-xp="25" data-level="0" />
-            📖 Read Chapter 1 of <a href="https://humanlikebook.com" target="_blank">HUMANLIKE</a></label>
+          <li class="task-item">
+            <div class="task-header">
+              <input type="checkbox" data-xp="25" data-level="0" id="level0-task1" />
+              <label for="level0-task1">📖 Read Chapter 1 of <a href="https://humanlikebook.com" target="_blank">HUMANLIKE</a></label>
+            </div>
           </li>
-          <li>
-            <label><input type="checkbox" data-xp="25" data-level="0" />
-            📺 Watch: What is Generative AI?</label>
-            <iframe height="315" src="https://www.youtube.com/embed/LxgMdjyw8uw" frameborder="0" allowfullscreen></iframe>
+          <li class="task-item">
+            <div class="task-header">
+              <input type="checkbox" data-xp="25" data-level="0" id="level0-task2" />
+              <label for="level0-task2">📺 Watch: What is Generative AI?</label>
+            </div>
+            <div class="task-content">
+              <iframe height="215" src="https://www.youtube.com/embed/LxgMdjyw8uw" frameborder="0" allowfullscreen></iframe>
+            </div>
           </li>
-          <li>
-            <label><input type="checkbox" data-xp="25" data-level="0" />
-            🛠 Complete <a href="https://canvanizer.com/new/business-model-canvas" target="_blank">GenAI Canvas</a></label>
+          <li class="task-item">
+            <div class="task-header">
+              <input type="checkbox" data-xp="25" data-level="0" id="level0-task3" />
+              <label for="level0-task3">🛠 Complete <a href="https://canvanizer.com/new/business-model-canvas" target="_blank">GenAI Canvas</a></label>
+            </div>
           </li>
-          <li>
-            <label><input type="checkbox" data-xp="25" data-level="0" />
-            ✍️ Reflect on your initial understanding of GenAI in a short paragraph</label>
+          <li class="task-item">
+            <div class="task-header">
+              <input type="checkbox" data-xp="25" data-level="0" id="level0-task4" />
+              <label for="level0-task4">✍️ Reflect on your initial understanding of GenAI in a short paragraph</label>
+            </div>
           </li>
         </ul>
       </div>
@@ -337,22 +376,32 @@
       </div>
       <div class="level-content" style="display: none;">
         <ul>
-          <li>
-            <label><input type="checkbox" data-xp="25" data-level="1" />
-            📖 Read about the current applications of GenAI in business</label>
+          <li class="task-item">
+            <div class="task-header">
+              <input type="checkbox" data-xp="25" data-level="1" id="level1-task1" />
+              <label for="level1-task1">📖 Read about the current applications of GenAI in business</label>
+            </div>
           </li>
-          <li>
-            <label><input type="checkbox" data-xp="25" data-level="1" />
-            📺 Watch: Case studies of successful GenAI implementations</label>
-            <iframe height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen></iframe>
+          <li class="task-item">
+            <div class="task-header">
+              <input type="checkbox" data-xp="25" data-level="1" id="level1-task2" />
+              <label for="level1-task2">📺 Watch: Case studies of successful GenAI implementations</label>
+            </div>
+            <div class="task-content">
+              <iframe height="215" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen></iframe>
+            </div>
           </li>
-          <li>
-            <label><input type="checkbox" data-xp="25" data-level="1" />
-            🛠 Draft a simple use case for GenAI in your industry</label>
+          <li class="task-item">
+            <div class="task-header">
+              <input type="checkbox" data-xp="25" data-level="1" id="level1-task3" />
+              <label for="level1-task3">🛠 Draft a simple use case for GenAI in your industry</label>
+            </div>
           </li>
-          <li>
-            <label><input type="checkbox" data-xp="25" data-level="1" />
-            ✍️ Record a Loom explaining your project idea</label>
+          <li class="task-item">
+            <div class="task-header">
+              <input type="checkbox" data-xp="25" data-level="1" id="level1-task4" />
+              <label for="level1-task4">✍️ Record a Loom explaining your project idea</label>
+            </div>
           </li>
         </ul>
       </div>
@@ -369,22 +418,32 @@
       </div>
       <div class="level-content" style="display: none;">
         <ul>
-          <li>
-            <label><input type="checkbox" data-xp="25" data-level="2" />
-            📖 Read the paper on advanced prompting techniques</label>
+          <li class="task-item">
+            <div class="task-header">
+              <input type="checkbox" data-xp="25" data-level="2" id="level2-task1" />
+              <label for="level2-task1">📖 Read the paper on advanced prompting techniques</label>
+            </div>
           </li>
-          <li>
-            <label><input type="checkbox" data-xp="25" data-level="2" />
-            📺 Watch: Expert panel on the future of AI</label>
-            <iframe height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen></iframe>
+          <li class="task-item">
+            <div class="task-header">
+              <input type="checkbox" data-xp="25" data-level="2" id="level2-task2" />
+              <label for="level2-task2">📺 Watch: Expert panel on the future of AI</label>
+            </div>
+            <div class="task-content">
+              <iframe height="215" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen></iframe>
+            </div>
           </li>
-          <li>
-            <label><input type="checkbox" data-xp="25" data-level="2" />
-            🛠 Create a complex prompt using the Chain of Thought technique</label>
+          <li class="task-item">
+            <div class="task-header">
+              <input type="checkbox" data-xp="25" data-level="2" id="level2-task3" />
+              <label for="level2-task3">🛠 Create a complex prompt using the Chain of Thought technique</label>
+            </div>
           </li>
-          <li>
-            <label><input type="checkbox" data-xp="25" data-level="2" />
-            ✍️ Self-evaluate your progress and identify areas for growth</label>
+          <li class="task-item">
+            <div class="task-header">
+              <input type="checkbox" data-xp="25" data-level="2" id="level2-task4" />
+              <label for="level2-task4">✍️ Self-evaluate your progress and identify areas for growth</label>
+            </div>
           </li>
         </ul>
       </div>
