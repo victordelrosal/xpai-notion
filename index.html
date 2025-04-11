@@ -74,32 +74,72 @@
       transition: width 0.4s ease;
     }
 
-    details {
-      margin: 15px 0;
-      border-left: 3px solid #ccc;
-      padding-left: 15px;
-    }
-    summary {
-      font-weight: bold;
-      cursor: pointer;
-      user-select: none;
-      margin-bottom: 8px;
-    }
-
-    ul { list-style: none; padding-left: 0; margin: 0; }
-    li {
-      margin: 15px 0;
-      background: #fafafa;
-      padding: 15px;
+    /* Level styles */
+    .level-container {
+      margin-bottom: 20px;
       border-radius: 8px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      border-left: 4px solid #4CAF50;
     }
-    input[type="checkbox"] {
-      margin-right: 10px;
-      transform: scale(1.2);
+    
+    .level-header {
+      background: #f9f9f9;
+      padding: 15px 20px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
     }
-    a { color: #1a73e8; text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    
+    .level-header h3 {
+      margin: 0;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .level-content {
+      padding: 0 20px 20px;
+      background: white;
+    }
+    
+    .level-badge {
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+      color: white;
+    }
+    
+    .badge-locked {
+      background: #9e9e9e;
+    }
+    
+    .badge-active {
+      background: #2196F3;
+    }
+    
+    .badge-completed {
+      background: #4CAF50;
+    }
+    
+    .level-progress {
+      font-size: 14px;
+      color: #666;
+    }
+    
+    /* Collapse/expand icon */
+    .level-icon {
+      transition: transform 0.3s ease;
+      font-size: 20px;
+    }
+    
+    .level-collapsed .level-icon {
+      transform: rotate(-90deg);
+    }
 
     iframe {
       width: 100%;
@@ -252,52 +292,110 @@
     <div class="level" id="levelDisplay">Level: 1 | XP: 0</div>
     <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
 
-    <h2>Milestones</h2>
-    <details open>
-      <summary>📘 Chapter 1: Foundations</summary>
-      <ul>
-        <li>
-          <label><input type="checkbox" data-xp="15" />
-          Read Chapter 1 of <a href="https://humanlikebook.com" target="_blank">HUMANLIKE</a></label>
-        </li>
-        <li>
-          <label><input type="checkbox" data-xp="20" />
-          Watch: What is Generative AI?</label>
-          <iframe height="315" src="https://www.youtube.com/embed/LxgMdjyw8uw" frameborder="0" allowfullscreen></iframe>
-        </li>
-      </ul>
-    </details>
-
-    <details>
-      <summary>🛠 Practice Tasks</summary>
-      <ul>
-        <li>
-          <label><input type="checkbox" data-xp="20" />
-          Complete <a href="https://canvanizer.com/new/business-model-canvas" target="_blank">GenAI Canvas</a></label>
-        </li>
-        <li>
-          <label><input type="checkbox" data-xp="20" />
-          Record a Loom explaining your project</label>
-        </li>
-      </ul>
-    </details>
-
-    <details>
-      <summary>🧠 Reflection</summary>
-      <ul>
-        <li><label><input type="checkbox" data-xp="10" />
-          Self-evaluate your progress honestly</label></li>
-        <li><label><input type="checkbox" data-xp="15" />
-          Identify your key takeaway so far</label></li>
-      </ul>
-    </details>
+    <h2>Your Learning Journey</h2>
+    
+    <!-- Level 1 -->
+    <div class="level-container" id="level-0">
+      <div class="level-header" onclick="toggleLevel(0)">
+        <h3><span class="level-icon">▼</span> Level 1: Foundations</h3>
+        <div>
+          <span class="level-progress" id="level-0-progress">0/4 Complete</span>
+          <span class="level-badge badge-active" id="level-0-badge">ACTIVE</span>
+        </div>
+      </div>
+      <div class="level-content">
+        <ul>
+          <li>
+            <label><input type="checkbox" data-xp="25" data-level="0" />
+            📖 Read Chapter 1 of <a href="https://humanlikebook.com" target="_blank">HUMANLIKE</a></label>
+          </li>
+          <li>
+            <label><input type="checkbox" data-xp="25" data-level="0" />
+            📺 Watch: What is Generative AI?</label>
+            <iframe height="315" src="https://www.youtube.com/embed/LxgMdjyw8uw" frameborder="0" allowfullscreen></iframe>
+          </li>
+          <li>
+            <label><input type="checkbox" data-xp="25" data-level="0" />
+            🛠 Complete <a href="https://canvanizer.com/new/business-model-canvas" target="_blank">GenAI Canvas</a></label>
+          </li>
+          <li>
+            <label><input type="checkbox" data-xp="25" data-level="0" />
+            ✍️ Reflect on your initial understanding of GenAI in a short paragraph</label>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- Level 2 -->
+    <div class="level-container level-collapsed" id="level-1" style="display: none;">
+      <div class="level-header" onclick="toggleLevel(1)">
+        <h3><span class="level-icon">▼</span> Level 2: Applications</h3>
+        <div>
+          <span class="level-progress" id="level-1-progress">0/4 Complete</span>
+          <span class="level-badge badge-locked" id="level-1-badge">LOCKED</span>
+        </div>
+      </div>
+      <div class="level-content" style="display: none;">
+        <ul>
+          <li>
+            <label><input type="checkbox" data-xp="25" data-level="1" />
+            📖 Read about the current applications of GenAI in business</label>
+          </li>
+          <li>
+            <label><input type="checkbox" data-xp="25" data-level="1" />
+            📺 Watch: Case studies of successful GenAI implementations</label>
+            <iframe height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen></iframe>
+          </li>
+          <li>
+            <label><input type="checkbox" data-xp="25" data-level="1" />
+            🛠 Draft a simple use case for GenAI in your industry</label>
+          </li>
+          <li>
+            <label><input type="checkbox" data-xp="25" data-level="1" />
+            ✍️ Record a Loom explaining your project idea</label>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- Level 3 -->
+    <div class="level-container level-collapsed" id="level-2" style="display: none;">
+      <div class="level-header" onclick="toggleLevel(2)">
+        <h3><span class="level-icon">▼</span> Level 3: Advanced Techniques</h3>
+        <div>
+          <span class="level-progress" id="level-2-progress">0/4 Complete</span>
+          <span class="level-badge badge-locked" id="level-2-badge">LOCKED</span>
+        </div>
+      </div>
+      <div class="level-content" style="display: none;">
+        <ul>
+          <li>
+            <label><input type="checkbox" data-xp="25" data-level="2" />
+            📖 Read the paper on advanced prompting techniques</label>
+          </li>
+          <li>
+            <label><input type="checkbox" data-xp="25" data-level="2" />
+            📺 Watch: Expert panel on the future of AI</label>
+            <iframe height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen></iframe>
+          </li>
+          <li>
+            <label><input type="checkbox" data-xp="25" data-level="2" />
+            🛠 Create a complex prompt using the Chain of Thought technique</label>
+          </li>
+          <li>
+            <label><input type="checkbox" data-xp="25" data-level="2" />
+            ✍️ Self-evaluate your progress and identify areas for growth</label>
+          </li>
+        </ul>
+      </div>
+    </div>
 
     <div class="easter">
       <h2>🔓 Unlock Goodies</h2>
       <input type="text" id="easterInput" placeholder="Type code from HUMANLIKE..." />
       <button onclick="checkEasterEgg()">Unlock</button>
       <div id="secretContent" class="secret">
-        🎁 <strong>Congrats!</strong> You’ve unlocked the secret HUMANLIKE zone.<br>
+        🎁 <strong>Congrats!</strong> You've unlocked the secret HUMANLIKE zone.<br>
         <a href="https://humanlikebook.com/bonus" target="_blank">Click here to download your goodies</a>.
       </div>
     </div>
@@ -337,21 +435,93 @@
     const modalText = document.getElementById('modalText');
     const levelCompleteOverlay = document.getElementById('levelCompleteOverlay');
     const levelCompleteText = document.getElementById('levelCompleteText');
+    
+    // Level management
+    const MAX_LEVELS = 3; // Total number of levels in the system
+    let currentUserLevel = 1; // Start at level 1
+    let pendingCheckbox = null;
+    let currentLevelBeingCompleted = null;
 
+    // User data
     let xp = parseInt(localStorage.getItem('xp')) || 0;
     let firstName = localStorage.getItem('firstName');
-    let pendingCheckbox = null;
-    let currentLevel = Math.floor(xp / 100) + 1;
-
-    // Store checkboxes grouped by their sections/levels
-    const levelCheckboxes = {};
-    let currentSection = null;
-
-    // Group checkboxes by sections
-    document.querySelectorAll('details').forEach((detail, index) => {
-      const sectionBoxes = Array.from(detail.querySelectorAll('input[type="checkbox"]'));
-      levelCheckboxes[index] = sectionBoxes;
-    });
+    
+    // Track progress by levels
+    const levelProgress = JSON.parse(localStorage.getItem('levelProgress') || '{}');
+    
+    function initializeLevels() {
+      // Load previously unlocked levels
+      const unlockedLevels = parseInt(localStorage.getItem('unlockedLevels')) || 1;
+      currentUserLevel = unlockedLevels;
+      
+      // Show only unlocked levels
+      for (let i = 0; i < MAX_LEVELS; i++) {
+        const levelElement = document.getElementById(`level-${i}`);
+        if (i < unlockedLevels) {
+          levelElement.style.display = 'block';
+          
+          // Update badge status
+          const levelBadge = document.getElementById(`level-${i}-badge`);
+          if (levelProgress[i] && levelProgress[i].completed) {
+            levelBadge.className = 'level-badge badge-completed';
+            levelBadge.textContent = 'COMPLETED';
+          } else if (i === unlockedLevels - 1) {
+            levelBadge.className = 'level-badge badge-active';
+            levelBadge.textContent = 'ACTIVE';
+          } else {
+            levelBadge.className = 'level-badge badge-completed';
+            levelBadge.textContent = 'COMPLETED';
+          }
+        }
+      }
+      
+      // Update progress indicators for each level
+      updateAllLevelProgress();
+    }
+    
+    function toggleLevel(levelIndex) {
+      const levelElement = document.getElementById(`level-${levelIndex}`);
+      const isCollapsed = levelElement.classList.contains('level-collapsed');
+      const content = levelElement.querySelector('.level-content');
+      
+      if (isCollapsed) {
+        levelElement.classList.remove('level-collapsed');
+        content.style.display = 'block';
+      } else {
+        levelElement.classList.add('level-collapsed');
+        content.style.display = 'none';
+      }
+    }
+    
+    function updateLevelProgress(levelIndex) {
+      const levelCheckboxes = document.querySelectorAll(`input[data-level="${levelIndex}"]`);
+      const totalItems = levelCheckboxes.length;
+      const checkedItems = Array.from(levelCheckboxes).filter(cb => cb.checked).length;
+      
+      // Update progress text
+      const progressEl = document.getElementById(`level-${levelIndex}-progress`);
+      progressEl.textContent = `${checkedItems}/${totalItems} Complete`;
+      
+      // Store progress
+      levelProgress[levelIndex] = {
+        total: totalItems,
+        completed: checkedItems === totalItems,
+        checkedItems: checkedItems
+      };
+      localStorage.setItem('levelProgress', JSON.stringify(levelProgress));
+      
+      // Check if this level is now complete
+      if (checkedItems === totalItems && !levelProgress[levelIndex].confirmed) {
+        currentLevelBeingCompleted = levelIndex;
+        showLevelCompleteModal(levelIndex);
+      }
+    }
+    
+    function updateAllLevelProgress() {
+      for (let i = 0; i < MAX_LEVELS; i++) {
+        updateLevelProgress(i);
+      }
+    }
 
     function askNameIfNeeded() {
       if (!firstName) {
@@ -380,41 +550,46 @@
       const progressPercent = (xp % 100);
       document.getElementById("levelDisplay").textContent = `Level: ${level} | XP: ${xp}`;
       document.getElementById("progressFill").style.width = progressPercent + "%";
-      
-      // Check if any level is complete
-      checkLevelCompletion();
-    }
-
-    function checkLevelCompletion() {
-      // Check each section if all its checkboxes are checked
-      for (const level in levelCheckboxes) {
-        const boxes = levelCheckboxes[level];
-        const allChecked = boxes.every(box => box.checked);
-        const totalXP = boxes.reduce((sum, box) => sum + parseInt(box.dataset.xp), 0);
-        
-        // If all boxes in this level are checked and they sum to 100 XP
-        if (allChecked && totalXP === 100 && !localStorage.getItem(`level_${level}_completed`)) {
-          showLevelCompleteModal(level);
-          break;
-        }
-      }
     }
 
     function showLevelCompleteModal(level) {
-      currentSection = level;
-      const levelName = document.querySelector(`details:nth-of-type(${parseInt(level) + 1}) summary`).textContent.trim();
-      levelCompleteText.innerText = `I, ${firstName}, confirm that I have fully completed all tasks in ${levelName}. I've watched all videos, read all materials, and completed all exercises as instructed.`;
+      const levelNumber = level + 1;
+      levelCompleteText.innerText = `I, ${firstName}, confirm that I have fully completed all tasks in Level ${levelNumber}. I've watched all videos, read all materials, and completed all exercises as instructed.`;
       levelCompleteOverlay.style.display = "flex";
     }
 
     function confirmLevelComplete() {
-      // Mark this level as completed
-      localStorage.setItem(`level_${currentSection}_completed`, 'true');
+      // Mark this level as confirmed completed
+      if (!levelProgress[currentLevelBeingCompleted]) {
+        levelProgress[currentLevelBeingCompleted] = {};
+      }
+      
+      levelProgress[currentLevelBeingCompleted].confirmed = true;
+      localStorage.setItem('levelProgress', JSON.stringify(levelProgress));
+      
+      // Update level badge
+      const levelBadge = document.getElementById(`level-${currentLevelBeingCompleted}-badge`);
+      levelBadge.className = 'level-badge badge-completed';
+      levelBadge.textContent = 'COMPLETED';
+      
+      // Unlock next level if available
+      const nextLevelIndex = currentLevelBeingCompleted + 1;
+      if (nextLevelIndex < MAX_LEVELS) {
+        const nextLevel = document.getElementById(`level-${nextLevelIndex}`);
+        nextLevel.style.display = 'block';
+        
+        const nextLevelBadge = document.getElementById(`level-${nextLevelIndex}-badge`);
+        nextLevelBadge.className = 'level-badge badge-active';
+        nextLevelBadge.textContent = 'ACTIVE';
+        
+        // Update unlocked levels in storage
+        localStorage.setItem('unlockedLevels', nextLevelIndex + 1);
+        currentUserLevel = nextLevelIndex + 1;
+      }
+      
+      // Hide modal and show celebration
       levelCompleteOverlay.style.display = "none";
       createCelebration();
-      
-      // Unlock the next level (in a real app, you might show new content here)
-      alert(`Congratulations! You've completed a level. New content unlocked!`);
     }
 
     function cancelLevelComplete() {
@@ -454,11 +629,16 @@
       });
       localStorage.setItem("checkedTasks", JSON.stringify(checked));
       localStorage.setItem("xp", xp);
+      
+      // Save level progress too
+      updateAllLevelProgress();
     }
 
     checkboxes.forEach((box) => {
       box.addEventListener("change", () => {
         const xpVal = parseInt(box.dataset.xp);
+        const levelIndex = parseInt(box.dataset.level);
+        
         if (box.checked) {
           pendingCheckbox = box;
           modalText.innerText = `I, ${firstName}, confirm that I have fully completed this item by watching the entire video, reading all materials, or completing the exercise as instructed. I understand that this knowledge forms a foundation for upcoming content.`;
@@ -466,6 +646,7 @@
         } else {
           xp -= xpVal;
           updateUI();
+          updateLevelProgress(levelIndex);
           saveProgress();
         }
       });
@@ -473,8 +654,10 @@
 
     function confirmModal() {
       const xpVal = parseInt(pendingCheckbox.dataset.xp);
+      const levelIndex = parseInt(pendingCheckbox.dataset.level);
       xp += xpVal;
       updateUI();
+      updateLevelProgress(levelIndex);
       saveProgress();
       modalOverlay.style.display = "none";
       pendingCheckbox = null;
@@ -496,6 +679,7 @@
         }
       });
       updateUI();
+      initializeLevels();
     }
 
     function checkEasterEgg() {
