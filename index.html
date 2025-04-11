@@ -176,6 +176,13 @@
       border-radius: 8px;
     }
 
+    .task-content iframe {
+      width: 100%;
+      height: 360px; /* Adjusted height to fit full video embed */
+      margin-top: 10px;
+      border-radius: 8px;
+    }
+
     .easter {
       margin-top: 30px;
     }
@@ -246,6 +253,13 @@
       border-radius: 6px;
       background: linear-gradient(to right, #b31217, #e52d27);
       cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-deny:hover {
+      background: linear-gradient(to right, #e52d27, #b31217);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     }
 
     /* Level completion celebration */
@@ -448,16 +462,6 @@
         </ul>
       </div>
     </div>
-
-    <div class="easter">
-      <h2>🔓 Unlock Goodies</h2>
-      <input type="text" id="easterInput" placeholder="Type code from HUMANLIKE..." />
-      <button onclick="checkEasterEgg()">Unlock</button>
-      <div id="secretContent" class="secret">
-        🎁 <strong>Congrats!</strong> You've unlocked the secret HUMANLIKE zone.<br>
-        <a href="https://humanlikebook.com/bonus" target="_blank">Click here to download your goodies</a>.
-      </div>
-    </div>
   </div>
 
   <!-- MODAL -->
@@ -474,7 +478,7 @@
   <!-- LEVEL COMPLETE MODAL -->
   <div class="level-complete-overlay" id="levelCompleteOverlay">
     <div class="level-complete-modal">
-      <h3>Level Complete!</h3>
+      <h3>Level Complete?</h3>
       <p id="levelCompleteText"></p>
       <div class="buttons">
         <button class="btn-confirm" onclick="confirmLevelComplete()">Confirm Completion</button>
@@ -512,6 +516,23 @@
       // Load previously unlocked levels
       const unlockedLevels = parseInt(localStorage.getItem('unlockedLevels')) || 1;
       currentUserLevel = unlockedLevels;
+      
+      // Clear any incorrect level completion status on page load
+      const storedLevelProgress = JSON.parse(localStorage.getItem('levelProgress') || '{}');
+      for (let i = 0; i < MAX_LEVELS; i++) {
+        if (storedLevelProgress[i] && storedLevelProgress[i].completed) {
+          // Verify if the level is actually complete by checking all boxes
+          const levelCheckboxes = document.querySelectorAll(`input[data-level="${i}"]`);
+          const allChecked = Array.from(levelCheckboxes).every(cb => cb.checked);
+          
+          if (!allChecked && storedLevelProgress[i].confirmed) {
+            // If not all checkboxes are checked but the level is marked as confirmed, reset it
+            storedLevelProgress[i].confirmed = false;
+            storedLevelProgress[i].completed = false;
+          }
+        }
+      }
+      localStorage.setItem('levelProgress', JSON.stringify(storedLevelProgress));
       
       // Show only unlocked levels
       for (let i = 0; i < MAX_LEVELS; i++) {
@@ -552,30 +573,45 @@
       }
     }
     
-    function updateLevelProgress(levelIndex) {
+    function checkLevelCompletion(levelIndex) {
       const levelCheckboxes = document.querySelectorAll(`input[data-level="${levelIndex}"]`);
       const totalItems = levelCheckboxes.length;
       const checkedItems = Array.from(levelCheckboxes).filter(cb => cb.checked).length;
-      
-      // Update progress text
-      const progressEl = document.getElementById(`level-${levelIndex}-progress`);
-      progressEl.textContent = `${checkedItems}/${totalItems} Complete`;
-      
-      // Store progress
-      levelProgress[levelIndex] = {
-        total: totalItems,
-        completed: checkedItems === totalItems,
-        checkedItems: checkedItems
-      };
-      localStorage.setItem('levelProgress', JSON.stringify(levelProgress));
-      
-      // Check if this level is now complete
-      if (checkedItems === totalItems && !levelProgress[levelIndex].confirmed) {
+
+      // Check if all items are checked
+      const isLevelComplete = (checkedItems === totalItems);
+
+      // If the level is complete and not yet confirmed, show the modal
+      if (isLevelComplete && !levelProgress[levelIndex].confirmed) {
         currentLevelBeingCompleted = levelIndex;
         showLevelCompleteModal(levelIndex);
       }
     }
-    
+
+    function updateLevelProgress(levelIndex) {
+      const levelCheckboxes = document.querySelectorAll(`input[data-level="${levelIndex}"]`);
+      const totalItems = levelCheckboxes.length;
+      const checkedItems = Array.from(levelCheckboxes).filter(cb => cb.checked).length;
+
+      // Update progress text
+      const progressEl = document.getElementById(`level-${levelIndex}-progress`);
+      progressEl.textContent = `${checkedItems}/${totalItems} Complete`;
+
+      // Store progress
+      levelProgress[levelIndex] = {
+        total: totalItems,
+        completed: checkedItems === totalItems,
+        checkedItems: checkedItems,
+      };
+
+      // If items are unchecked after confirmation, reset the confirmed status
+      if (levelProgress[levelIndex].confirmed && checkedItems < totalItems) {
+        levelProgress[levelIndex].confirmed = false;
+      }
+
+      localStorage.setItem('levelProgress', JSON.stringify(levelProgress));
+    }
+
     function updateAllLevelProgress() {
       for (let i = 0; i < MAX_LEVELS; i++) {
         updateLevelProgress(i);
@@ -604,19 +640,73 @@
       }
     }
 
-    function updateUI() {
+    function calculateMaxXP() {
+      let maxXP = 0;
+      for (let i = 0; i < currentUserLevel; i++) {
+        const levelCheckboxes = document.querySelectorAll(`input[data-level="${i}"]`);
+        levelCheckboxes.forEach(cb => {
+          maxXP += parseInt(cb.dataset.xp);
+        });
+      }
+      return maxXP;
+    }
+
+    function harmonizeXPAndLevel() {
+      const maxXP = calculateMaxXP();
+      if (xp > maxXP) {
+        xp = maxXP;
+        localStorage.setItem("xp", xp);
+      }
       const level = Math.floor(xp / 100) + 1;
-      const progressPercent = (xp % 100);
       document.getElementById("levelDisplay").textContent = `Level: ${level} | XP: ${xp}`;
-      document.getElementById("progressFill").style.width = progressPercent + "%";
+      document.getElementById("progressFill").style.width = (xp % 100) + "%";
+    }
+
+    function updateUI() {
+      harmonizeXPAndLevel();
     }
 
     function showLevelCompleteModal(level) {
-      const levelNumber = level + 1;
-      levelCompleteText.innerText = `I, ${firstName}, confirm that I have fully completed all tasks in Level ${levelNumber}. I've watched all videos, read all materials, and completed all exercises as instructed.`;
-      levelCompleteOverlay.style.display = "flex";
+      // Extra safety check - clear any existing level completion
+      levelCompleteOverlay.style.display = "none";
+      
+      const levelNumber = level + 1; // Convert zero-based index to human-readable level number
+      const levelCheckboxes = document.querySelectorAll(`input[data-level="${level}"]`);
+      const totalItems = levelCheckboxes.length;
+      const checkedItems = Array.from(levelCheckboxes).filter(cb => cb.checked).length;
+      
+      // Triple-check that ALL items are actually checked
+      if (checkedItems !== totalItems) {
+        console.log(`Level ${levelNumber} cannot be completed: ${checkedItems}/${totalItems} items checked`);
+        return; // Exit without showing the modal
+      }
+      
+      // Only show for the CURRENT level that's being completed
+      if (currentLevelBeingCompleted === level) {
+        levelCompleteText.innerHTML = `Please confirm that Level <strong>${levelNumber}</strong> is Complete.<br>
+        I, ${firstName}, confirm that I have fully completed all tasks in <strong>Level ${levelNumber}</strong>. I've watched all videos, read all materials, and completed all exercises as instructed.`;
+        levelCompleteOverlay.style.display = "flex";
+      }
     }
 
+    // Add a cleanup function to ensure the level complete modal isn't showing incorrectly
+    function checkAndCleanupLevelComplete() {
+      // If the level complete dialog is showing, verify it's showing for a valid level
+      if (levelCompleteOverlay.style.display === "flex" && currentLevelBeingCompleted !== null) {
+        const levelCheckboxes = document.querySelectorAll(`input[data-level="${currentLevelBeingCompleted}"]`);
+        const allChecked = Array.from(levelCheckboxes).every(cb => cb.checked);
+        
+        if (!allChecked) {
+          // If not all boxes are checked, hide the modal
+          console.log("Incorrect level completion dialog shown. Hiding it.");
+          levelCompleteOverlay.style.display = "none";
+        }
+      }
+    }
+
+    // Attach this cleanup check to page load and after any checkbox changes
+    window.addEventListener('load', checkAndCleanupLevelComplete);
+    
     function confirmLevelComplete() {
       // Mark this level as confirmed completed
       if (!levelProgress[currentLevelBeingCompleted]) {
@@ -697,16 +787,26 @@
       box.addEventListener("change", () => {
         const xpVal = parseInt(box.dataset.xp);
         const levelIndex = parseInt(box.dataset.level);
-        
+
         if (box.checked) {
+          // First show task confirmation dialog WITHOUT checking level completion
           pendingCheckbox = box;
           modalText.innerText = `I, ${firstName}, confirm that I have fully completed this item by watching the entire video, reading all materials, or completing the exercise as instructed. I understand that this knowledge forms a foundation for upcoming content.`;
           modalOverlay.style.display = "flex";
+          
+          // We'll check for level completion after confirming the task (in confirmModal function)
         } else {
+          if (levelProgress[levelIndex] && levelProgress[levelIndex].confirmed) {
+            levelProgress[levelIndex].confirmed = false;
+            localStorage.setItem('levelProgress', JSON.stringify(levelProgress));
+          }
+
           xp -= xpVal;
           updateUI();
           updateLevelProgress(levelIndex);
           saveProgress();
+
+          checkLevelCompletion(levelIndex);
         }
       });
     });
@@ -719,7 +819,15 @@
       updateLevelProgress(levelIndex);
       saveProgress();
       modalOverlay.style.display = "none";
+      
+      // Store the checkbox that was just confirmed
+      const confirmedCheckbox = pendingCheckbox;
       pendingCheckbox = null;
+      
+      // Now check if the level is complete AFTER confirming the task
+      setTimeout(() => {
+        checkLevelCompletion(levelIndex);
+      }, 300); // Short delay to ensure UI updates first
     }
 
     function cancelModal() {
@@ -737,16 +845,11 @@
           xp += parseInt(checkboxes[i].dataset.xp);
         }
       });
-      updateUI();
       initializeLevels();
-    }
-
-    function checkEasterEgg() {
-      const val = document.getElementById("easterInput").value.toLowerCase().trim();
-      const codes = ["curiosity", "exploration", "kindness", "humanlike"];
-      if (codes.includes(val)) {
-        document.getElementById("secretContent").style.display = "block";
-      }
+      harmonizeXPAndLevel();
+      
+      // Make sure no incorrect dialogs are showing on load
+      setTimeout(checkAndCleanupLevelComplete, 500);
     }
 
     loadProgress();
